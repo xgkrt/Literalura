@@ -1,41 +1,40 @@
 package br.com.alura.literalura.model;
+import jakarta.persistence.*;
 
 import java.util.List;
 
+@Entity
+@Table(name = "livros")
 public class Livro {
 
-    private String id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(unique = true)
     private String titulo;
-    private String autor;
     private String idioma;
     private Integer numeroDownloads;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "autor_id")
+    private Autor autor;
 
     public Livro(){}
-    public Livro(DadosLivro dadosLivro) {
-        this.titulo = dadosLivro.titulo();
-        this.autor = pegaAutor(dadosLivro).getNome();
-        this.idioma = idiomaMod(dadosLivro.idioma());
-        this.numeroDownloads = dadosLivro.numeroDownloads();
+
+
+    public Autor getAutor() {
+        return autor;
     }
 
-    private String idiomaMod(List<String> idiomas) {
-        if (idiomas == null || idiomas.isEmpty()) {
-            return "desconhecido";
-        } else {
-            return idiomas.get(0);
-        }
-    }
-    public Autor pegaAutor(DadosLivro dadosLivro) {
-        DadosAutor dadosAutor = dadosLivro.autor().get(0);
-        return new Autor(dadosAutor);
+    public void setAutor(Autor autor) {
+        this.autor = autor;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -47,13 +46,6 @@ public class Livro {
         this.titulo = titulo;
     }
 
-    public String getAutor() {
-        return autor;
-    }
-
-    public void setAutor(String autor) {
-        this.autor = autor;
-    }
 
     public String getIdioma() {
         return idioma;
@@ -73,12 +65,11 @@ public class Livro {
 
     @Override
     public String toString() {
-        return "Livro{" +
-                "id='" + id + '\'' +
-                ", titulo='" + titulo + '\'' +
-                ", autores=" + autor +
-                ", idiomas=" + idioma +
-                ", numeroDownloads=" + numeroDownloads +
-                '}';
+        return "---- Informações do Livro ----\n" +
+                "\nTitulo: " + titulo +
+                "\nAutor: " +  autor.getNome() +
+                "\nIdiomas: " + idioma +
+                "\nNúmero de Downloads: " + numeroDownloads +
+                "\n----------------------------\n";
     }
 }
